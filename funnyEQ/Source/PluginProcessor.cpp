@@ -22,8 +22,8 @@ void FunnyEQAudioProcessor::initializeDSP()
 {
     for(int i = 0; i < getTotalNumOutputChannels(); i++)
     {
-        ptrLowPass[i] = std::unique_ptr<EQ_LowPass>(new EQ_LowPass);
-        ptrHighPass[i] = std::unique_ptr<EQ_HighPass>(new EQ_HighPass);
+        ptrLowPass[i] = std::unique_ptr<EQ_Filters>(new EQ_Filters(EQ_Filters::FilterType::LPF));
+        ptrHighPass[i] = std::unique_ptr<EQ_Filters>(new EQ_Filters(EQ_Filters::FilterType::HPF));
     }
 }
 
@@ -34,9 +34,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout FunnyEQAudioProcessor::initi
     //HIGH PASSS FREQ
     params.push_back(std::make_unique<juce::AudioParameterFloat>(HIGH_FREQ_ID,
                                                                  HIGH_FREQ_NAME,
-                                                                 200.0f,
+                                                                 50.0f,
                                                                  18000.0f,
-                                                                 2500.0f));
+                                                                 100.0f));
     //HIGH PASSS GAIN
     params.push_back(std::make_unique<juce::AudioParameterFloat>(HIGH_GAIN_ID,
                                                                  HIGH_GAIN_NAME,
@@ -47,8 +47,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout FunnyEQAudioProcessor::initi
     params.push_back(std::make_unique<juce::AudioParameterFloat>(LOW_FREQ_ID,
                                                                  LOW_FREQ_NAME,
                                                                  50.0f,
-                                                                 5000.0f,
-                                                                 250.0f));
+                                                                 10000.0f,
+                                                                 5000.0f));
     //LOW PASSS GAIN
     params.push_back(std::make_unique<juce::AudioParameterFloat>(LOW_GAIN_ID,
                                                                  LOW_GAIN_NAME,
@@ -119,8 +119,8 @@ void FunnyEQAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 {
     for(int i = 0; i < getTotalNumOutputChannels(); i++)
     {
-        ptrLowPass[i]->prepareLowPass(sampleRate);
-        ptrHighPass[i]->prepareHighPass(sampleRate);
+        ptrLowPass[i]->prepare(sampleRate);
+        ptrHighPass[i]->prepare(sampleRate);
     }
 }
 
@@ -160,17 +160,19 @@ void FunnyEQAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     {
         auto* channelData = buffer.getWritePointer (channel);
 
-        ptrLowPass[channel]->processLowPass(channelData,
-                                            channelData,
-                                            buffer.getNumSamples(),
-                                            *parameters.getRawParameterValue(LOW_FREQ_ID),
-                                            *parameters.getRawParameterValue(LOW_GAIN_ID));
+        ptrLowPass[channel]->process(channelData,
+                                     channelData,
+                                     buffer.getNumSamples(),
+                                     *parameters.getRawParameterValue(LOW_FREQ_ID),
+                                     *parameters.getRawParameterValue(LOW_GAIN_ID),
+                                     EQ_Filters::FilterType::LPF);
         
-        ptrHighPass[channel]->processHighPass(channelData,
-                                              channelData,
-                                              buffer.getNumSamples(),
-                                              *parameters.getRawParameterValue(HIGH_FREQ_ID),
-                                              *parameters.getRawParameterValue(HIGH_GAIN_ID));
+        ptrHighPass[channel]->process(channelData,
+                                      channelData,
+                                      buffer.getNumSamples(),
+                                      *parameters.getRawParameterValue(HIGH_FREQ_ID),
+                                      *parameters.getRawParameterValue(HIGH_GAIN_ID),
+                                      EQ_Filters::FilterType::HPF);
     }
 }
 

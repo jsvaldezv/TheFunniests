@@ -14,10 +14,8 @@
       <FILE id="iWZnYc" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
     <GROUP id="{AC0C5ED2-B729-BD4B-29A5-BF268435FEA6}" name="DSP">
-      <FILE id="XdGaqq" name="EQ_HighPass.cpp" compile="1" resource="0" file="Source/EQ_HighPass.cpp"/>
-      <FILE id="KaGJGU" name="EQ_HighPass.h" compile="0" resource="0" file="Source/EQ_HighPass.h"/>
-      <FILE id="haw4F3" name="EQ_LowPass.cpp" compile="1" resource="0" file="Source/EQ_LowPass.cpp"/>
-      <FILE id="CIWEzL" name="EQ_LowPass.h" compile="0" resource="0" file="Source/EQ_LowPass.h"/>
+      <FILE id="bbWdOD" name="EQ_Filters.cpp" compile="1" resource="0" file="Source/EQ_Filters.cpp"/>
+      <FILE id="nciXjD" name="EQ_Filters.h" compile="0" resource="0" file="Source/EQ_Filters.h"/>
     </GROUP>
     <GROUP id="{0E063FAB-AB5A-9330-C781-C5BD1BD91C21}" name="Helpers">
       <FILE id="tCkaR9" name="EQ_Helper.h" compile="0" resource="0" file="Source/EQ_Helper.h"/>

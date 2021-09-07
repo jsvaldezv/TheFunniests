@@ -1,8 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "EQ_Helper.h"
-#include "EQ_LowPass.h"
-#include "EQ_HighPass.h"
+#include "EQ_Filters.h"
 
 class FunnyEQAudioProcessor  : public juce::AudioProcessor
 {
@@ -41,8 +40,8 @@ public:
 
 private:
     
-    std::unique_ptr<EQ_LowPass> ptrLowPass[2];
-    std::unique_ptr<EQ_HighPass> ptrHighPass[2];
+    std::unique_ptr<EQ_Filters> ptrLowPass[2];
+    std::unique_ptr<EQ_Filters> ptrHighPass[2];
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FunnyEQAudioProcessor)
 };
