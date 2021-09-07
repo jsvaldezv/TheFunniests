@@ -40,9 +40,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout FunnyEQAudioProcessor::initi
     //HIGH PASSS GAIN
     params.push_back(std::make_unique<juce::AudioParameterFloat>(HIGH_GAIN_ID,
                                                                  HIGH_GAIN_NAME,
-                                                                 0.1f,
-                                                                 6.0f,
-                                                                 0.7f));
+                                                                 -60.0f,
+                                                                 24.0f,
+                                                                 0.0f));
     //LOW PASSS FREQ
     params.push_back(std::make_unique<juce::AudioParameterFloat>(LOW_FREQ_ID,
                                                                  LOW_FREQ_NAME,
@@ -52,9 +52,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout FunnyEQAudioProcessor::initi
     //LOW PASSS GAIN
     params.push_back(std::make_unique<juce::AudioParameterFloat>(LOW_GAIN_ID,
                                                                  LOW_GAIN_NAME,
-                                                                 0.1f,
-                                                                 6.0f,
-                                                                 0.7f));
+                                                                 -60.0f,
+                                                                 24.0f,
+                                                                 0.0f));
     
     return {params.begin(), params.end()};
 }
@@ -115,7 +115,14 @@ const juce::String FunnyEQAudioProcessor::getProgramName (int index)
 
 void FunnyEQAudioProcessor::changeProgramName (int index, const juce::String& newName){}
 
-void FunnyEQAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock){}
+void FunnyEQAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+{
+    for(int i = 0; i < getTotalNumOutputChannels(); i++)
+    {
+        ptrLowPass[i]->prepareLowPass(sampleRate);
+        ptrHighPass[i]->prepareHighPass(sampleRate);
+    }
+}
 
 void FunnyEQAudioProcessor::releaseResources(){}
 
@@ -153,6 +160,17 @@ void FunnyEQAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     {
         auto* channelData = buffer.getWritePointer (channel);
 
+        ptrLowPass[channel]->processLowPass(channelData,
+                                            channelData,
+                                            buffer.getNumSamples(),
+                                            *parameters.getRawParameterValue(LOW_FREQ_ID),
+                                            *parameters.getRawParameterValue(LOW_GAIN_ID));
+        
+        ptrHighPass[channel]->processHighPass(channelData,
+                                              channelData,
+                                              buffer.getNumSamples(),
+                                              *parameters.getRawParameterValue(HIGH_FREQ_ID),
+                                              *parameters.getRawParameterValue(HIGH_GAIN_ID));
     }
 }
 
