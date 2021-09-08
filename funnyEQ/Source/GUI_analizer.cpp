@@ -1,9 +1,7 @@
 #include <JuceHeader.h>
 #include "GUI_analizer.h"
 
-GUI_analizer::GUI_analizer(FunnyEQAudioProcessor& p) : /*forwardFFT (fftOrder),
-                                                       window (fftSize, juce::dsp::WindowingFunction<float>::hann),*/
-                                                       audioProcessor(p)
+GUI_analizer::GUI_analizer(FunnyEQAudioProcessor& p) : audioProcessor(p)
 {
     setSize(WIDTH, HEIGHT/2);
     startTimerHz(60);
@@ -25,9 +23,9 @@ void GUI_analizer::paint (juce::Graphics& g)
         auto width  = getLocalBounds().getWidth();
         auto height = getLocalBounds().getHeight();
 
-        g.drawLine ({ (float) juce::jmap (i - 1, 0, audioProcessor.scopeSize - 1, 0, width),
+        g.drawLine ({ (float) juce::jmap (i -1, 0, audioProcessor.scopeSize - 1, 0, width),
                               juce::jmap (audioProcessor.scopeData[i - 1], 0.0f, 1.0f, (float) height, 0.0f),
-                      (float) juce::jmap (i,     0, audioProcessor.scopeSize - 1, 0, width),
+                      (float) juce::jmap (i, 0, audioProcessor.scopeSize - 1, 0, width),
                               juce::jmap (audioProcessor.scopeData[i],     0.0f, 1.0f, (float) height, 0.0f) });
     }
     

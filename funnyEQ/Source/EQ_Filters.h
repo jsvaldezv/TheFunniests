@@ -9,8 +9,10 @@ public:
     
     enum FilterType
     {
-         LPF,
-         HPF
+        LPF,
+        HPF,
+        BELL,
+        NOTCH
     };
     
     EQ_Filters(FilterType inFilterType);
@@ -23,15 +25,15 @@ public:
                  int inNumSamples,
                  float inFrequency,
                  float inGain,
-                 FilterType inFilterType);
+                 int inFilterType);
     
-    void updateCoefficients(FilterType inFilterType);
+    void updateCoefficients(int inFilterType);
 
 private:
     
-    FilterType myFilterType = LPF;
+    int myFilterType = LPF;
     
-    float sampleRate{0.0f}, frequency{200.0f}, gain {0.1f};
+    float sampleRate{0.0f}, frequency{200.0f}, gain {0.1f}, A{0.0f};
     
     float x1{0.0f}, x2{0.0f}, y1{0.0f}, y2{0.0f};
     

@@ -38,15 +38,15 @@ public:
     juce::AudioProcessorValueTreeState parameters;
     juce::AudioProcessorValueTreeState::ParameterLayout initializeGUI();
     
+    void pushNextSampleIntoFifo (float* sample) noexcept;
+    void drawNextFrameOfSpectrum();
+    
     enum
     {
         fftOrder  = 11,
         fftSize   = 1 << fftOrder,
         scopeSize = 512
     };
-    
-    void pushNextSampleIntoFifo (float* sample) noexcept;
-    void drawNextFrameOfSpectrum();
     
     float fifo [fftSize];
     float fftData [2 * fftSize];

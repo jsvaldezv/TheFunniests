@@ -17,14 +17,17 @@ void EQ_Filters::process(float* inAudio,
                          int inNumSamples,
                          float inFrequency,
                          float inGain,
-                         FilterType inFilterType)
+                         int inFilterType)
 {
-    if(frequency != inFrequency || gain != inGain)
+    if(frequency != inFrequency || gain != inGain || myFilterType != inFilterType)
     {
+        //A = std::pow(10.0f, inGain / 40.0f);
         inGain = juce::Decibels::decibelsToGain(inGain, -100.0f);
+        A = juce::Decibels::decibelsToGain(inGain, -100.0f);
         
         frequency = inFrequency;
         gain = inGain;
+        myFilterType = inFilterType;
         updateCoefficients(inFilterType);
     }
     
@@ -41,17 +44,31 @@ void EQ_Filters::process(float* inAudio,
     }
 }
 
-void EQ_Filters::updateCoefficients(FilterType inFilter)
+void EQ_Filters::updateCoefficients(int inFilter)
 {
-    myFilterType = inFilter;
+    switch(inFilter)
+    {
+        case 0:
+            myFilterType = LPF;
+            break;
+        case 1:
+            myFilterType = HPF;
+            break;
+        case 2:
+            myFilterType = BELL;
+            break;
+        case 3:
+            myFilterType = NOTCH;
+            break;
+    }
+    
+    w0 = (2.0f * VALOR_PI) * frequency / sampleRate;
+    alpha = sin(w0) / (2.0f * gain);
+    cw0 = cos(w0);
     
     switch(myFilterType)
     {
         case LPF:
-            
-            w0 = (2.0f * VALOR_PI) * frequency / sampleRate;
-            alpha = sin(w0) / (2.0f * gain);
-            cw0 = cos(w0);
             
             a0 = 1.0f + alpha;
             a1 = (-2.0f * cw0);
@@ -64,11 +81,7 @@ void EQ_Filters::updateCoefficients(FilterType inFilter)
             break;
             
         case HPF:
-            
-            w0 = (2.0f * VALOR_PI) * frequency / sampleRate;
-            alpha = sin(w0) / (2.0f * gain);
-            cw0 = cos(w0);
-            
+                        
             a0 = 1.0f + alpha;
             a1 = (-2.0f * cw0);
             a2 = (1.0f - alpha);
@@ -78,5 +91,29 @@ void EQ_Filters::updateCoefficients(FilterType inFilter)
             b2 = b0;
             
             break;
+        
+        case BELL:
+            
+            a0 = 1.0f + alpha * A;
+            a1 = -2.0f * std::cos(w0);
+            a2 = 1.0f - alpha * A;
+            
+            b0 = 1.0f + (alpha / A);
+            b1 = -2.0f * std::cos(w0);
+            b2 = 1.0f - (alpha / A);
+            
+            break;
+            
+        case NOTCH:
+            
+            b0 = 1.0f;
+            b1 = -2.0f * std::cos(w0);
+            b2 = 1.0f;
+            a0 = 1.0f + alpha;
+            a1 = -2.0f * std::cos(w0);
+            a2 = 1.0f - alpha;
+            
+            break;
+            
     }
 }

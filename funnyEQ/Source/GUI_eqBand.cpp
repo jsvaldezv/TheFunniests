@@ -4,8 +4,10 @@ GUI_eqBand::GUI_eqBand(FunnyEQAudioProcessor& p, int inBand) : audioProcessor(p)
 {
     setSize(WIDTH/4, HEIGHT/2);
     
-    typeFilterCombo.addItem ("High Pass", 1);
-    typeFilterCombo.addItem ("Low Pass", 2);
+    typeFilterCombo.addItem ("Low Pass", 1);
+    typeFilterCombo.addItem ("High Pass", 2);
+    typeFilterCombo.addItem ("Bell", 3);
+    typeFilterCombo.addItem ("Notch", 4);
     typeFilterCombo.setJustificationType(juce::Justification::centred);
     addAndMakeVisible(typeFilterCombo);
     

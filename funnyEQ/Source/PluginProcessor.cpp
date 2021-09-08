@@ -10,7 +10,9 @@ FunnyEQAudioProcessor::FunnyEQAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       ), parameters(*this, nullptr, PARAMETERS, initializeGUI()), forwardFFT (fftOrder), window (fftSize, juce::dsp::WindowingFunction<float>::hann)
+                       ), parameters(*this, nullptr, PARAMETERS, initializeGUI()),
+                          forwardFFT (fftOrder),
+                          window (fftSize, juce::dsp::WindowingFunction<float>::hann)
 #endif
 {
     initializeDSP();
@@ -24,8 +26,8 @@ void FunnyEQAudioProcessor::initializeDSP()
     {
         ptrBandOne[i] = std::unique_ptr<EQ_Filters>(new EQ_Filters(EQ_Filters::FilterType::LPF));
         ptrBandTwo[i] = std::unique_ptr<EQ_Filters>(new EQ_Filters(EQ_Filters::FilterType::HPF));
-        ptrBandThree[i] = std::unique_ptr<EQ_Filters>(new EQ_Filters(EQ_Filters::FilterType::LPF));
-        ptrBandFour[i] = std::unique_ptr<EQ_Filters>(new EQ_Filters(EQ_Filters::FilterType::HPF));
+        ptrBandThree[i] = std::unique_ptr<EQ_Filters>(new EQ_Filters(EQ_Filters::FilterType::BELL));
+        ptrBandFour[i] = std::unique_ptr<EQ_Filters>(new EQ_Filters(EQ_Filters::FilterType::NOTCH));
     }
 }
 
@@ -37,7 +39,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout FunnyEQAudioProcessor::initi
     // TYPE BAND ONE
     params.push_back(std::make_unique<juce::AudioParameterChoice>(BAND_ONE_ID,
                                                                   BAND_ONE_NAME,
-                                                                  juce::StringArray("LPF","HPF"),0));
+                                                                  juce::StringArray("LPF", "HPF", "BELL", "NOTCH"),0));
     //BAND ONE FREQ
     params.push_back(std::make_unique<juce::AudioParameterFloat>(BANDONE_FREQ_ID,
                                                                  BANDONE_FREQ_NAME,
@@ -50,11 +52,15 @@ juce::AudioProcessorValueTreeState::ParameterLayout FunnyEQAudioProcessor::initi
                                                                  -60.0f,
                                                                  24.0f,
                                                                  0.0f));
+    //BAND ONE BYPASS
+    params.push_back(std::make_unique<juce::AudioParameterBool>(BANDONE_BYPASS_ID,
+                                                                BANDONE_BYPASS_NAME,
+                                                                true));
     //************************************************* BAND TWO ***********************************************//
     // TYPE TWO ONE
     params.push_back(std::make_unique<juce::AudioParameterChoice>(BAND_TWO_ID,
                                                                   BAND_TWO_NAME,
-                                                                  juce::StringArray("LPF","HPF"),0));
+                                                                  juce::StringArray("LPF","HPF", "BELL", "NOTCH"),0));
     //BAND TWO FREQ
     params.push_back(std::make_unique<juce::AudioParameterFloat>(BANDTWO_FREQ_ID,
                                                                  BANDTWO_FREQ_NAME,
@@ -67,38 +73,50 @@ juce::AudioProcessorValueTreeState::ParameterLayout FunnyEQAudioProcessor::initi
                                                                  -60.0f,
                                                                  24.0f,
                                                                  0.0f));
+    //BAND TWO BYPASS
+    params.push_back(std::make_unique<juce::AudioParameterBool>(BANDTWO_BYPASS_ID,
+                                                                BANDTWO_BYPASS_NAME,
+                                                                false));
     //************************************************* BAND THREE ***********************************************//
     params.push_back(std::make_unique<juce::AudioParameterChoice>(BAND_THREE_ID,
                                                                   BAND_THREE_NAME,
-                                                                  juce::StringArray("LPF","HPF"),0));
-    //BAND TWO FREQ
+                                                                  juce::StringArray("LPF","HPF", "BELL", "NOTCH"),0));
+    //BAND THREE FREQ
     params.push_back(std::make_unique<juce::AudioParameterFloat>(BANDTHREE_FREQ_ID,
                                                                  BANDTHREE_FREQ_NAME,
                                                                  50.0f,
                                                                  10000.0f,
                                                                  500.0f));
-    //BAND TWO GAIN
+    //BAND THREE GAIN
     params.push_back(std::make_unique<juce::AudioParameterFloat>(BANDTHREE_GAIN_ID,
                                                                  BANDTHREE_GAIN_NAME,
                                                                  -60.0f,
                                                                  24.0f,
                                                                  0.0f));
+    //BAND THREE BYPASS
+    params.push_back(std::make_unique<juce::AudioParameterBool>(BANDTHREE_BYPASS_ID,
+                                                                BANDTHREE_BYPASS_NAME,
+                                                                false));
     //************************************************* BAND FOUR ***********************************************//
     params.push_back(std::make_unique<juce::AudioParameterChoice>(BAND_FOUR_ID,
                                                                   BAND_FOUR_NAME,
-                                                                  juce::StringArray("LPF","HPF"),0));
-    //BAND TWO FREQ
+                                                                  juce::StringArray("LPF","HPF", "BELL", "NOTCH"),0));
+    //BAND FOUR FREQ
     params.push_back(std::make_unique<juce::AudioParameterFloat>(BANDFOUR_FREQ_ID,
                                                                  BANDFOUR_FREQ_NAME,
                                                                  50.0f,
                                                                  10000.0f,
                                                                  500.0f));
-    //BAND TWO GAIN
+    //BAND FOUR GAIN
     params.push_back(std::make_unique<juce::AudioParameterFloat>(BANDFOUR_GAIN_ID,
                                                                  BANDFOUR_GAIN_NAME,
                                                                  -60.0f,
                                                                  24.0f,
                                                                  0.0f));
+    //BAND FOUR BYPASS
+    params.push_back(std::make_unique<juce::AudioParameterBool>(BANDFOUR_BYPASS_ID,
+                                                                BANDFOUR_BYPASS_NAME,
+                                                                false));
     
     return {params.begin(), params.end()};
 }
@@ -206,33 +224,45 @@ void FunnyEQAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     {
         auto* channelData = buffer.getWritePointer (channel);
 
-        ptrBandOne[channel]->process(channelData,
-                                     channelData,
-                                     buffer.getNumSamples(),
-                                     *parameters.getRawParameterValue(BANDONE_FREQ_ID),
-                                     *parameters.getRawParameterValue(BANDONE_GAIN_ID),
-                                     EQ_Filters::FilterType::LPF);
+        if(*parameters.getRawParameterValue(BANDONE_BYPASS_ID))
+        {
+            ptrBandOne[channel]->process(channelData,
+                                         channelData,
+                                         buffer.getNumSamples(),
+                                         *parameters.getRawParameterValue(BANDONE_FREQ_ID),
+                                         *parameters.getRawParameterValue(BANDONE_GAIN_ID),
+                                         *parameters.getRawParameterValue(BAND_ONE_ID));
+        }
         
-        ptrBandTwo[channel]->process(channelData,
-                                     channelData,
-                                     buffer.getNumSamples(),
-                                     *parameters.getRawParameterValue(BANDTWO_FREQ_ID),
-                                     *parameters.getRawParameterValue(BANDTWO_GAIN_ID),
-                                     EQ_Filters::FilterType::HPF);
+        if(*parameters.getRawParameterValue(BANDTWO_BYPASS_ID))
+        {
+            ptrBandTwo[channel]->process(channelData,
+                                         channelData,
+                                         buffer.getNumSamples(),
+                                         *parameters.getRawParameterValue(BANDTWO_FREQ_ID),
+                                         *parameters.getRawParameterValue(BANDTWO_GAIN_ID),
+                                         *parameters.getRawParameterValue(BAND_TWO_ID));
+        }
         
-        ptrBandThree[channel]->process(channelData,
-                                     channelData,
-                                     buffer.getNumSamples(),
-                                     *parameters.getRawParameterValue(BANDTHREE_FREQ_ID),
-                                     *parameters.getRawParameterValue(BANDTHREE_GAIN_ID),
-                                     EQ_Filters::FilterType::HPF);
-        
-        ptrBandFour[channel]->process(channelData,
-                                     channelData,
-                                     buffer.getNumSamples(),
-                                     *parameters.getRawParameterValue(BANDFOUR_FREQ_ID),
-                                     *parameters.getRawParameterValue(BANDFOUR_GAIN_ID),
-                                     EQ_Filters::FilterType::HPF);
+        if(*parameters.getRawParameterValue(BANDTHREE_BYPASS_ID))
+        {
+            ptrBandThree[channel]->process(channelData,
+                                           channelData,
+                                           buffer.getNumSamples(),
+                                           *parameters.getRawParameterValue(BANDTHREE_FREQ_ID),
+                                           *parameters.getRawParameterValue(BANDTHREE_GAIN_ID),
+                                           *parameters.getRawParameterValue(BAND_THREE_ID));
+        }
+
+        if(*parameters.getRawParameterValue(BANDFOUR_BYPASS_ID))
+        {
+            ptrBandFour[channel]->process(channelData,
+                                          channelData,
+                                          buffer.getNumSamples(),
+                                          *parameters.getRawParameterValue(BANDFOUR_FREQ_ID),
+                                          *parameters.getRawParameterValue(BANDFOUR_GAIN_ID),
+                                          *parameters.getRawParameterValue(BAND_FOUR_ID));
+        }
         
         pushNextSampleIntoFifo(channelData);
     }
