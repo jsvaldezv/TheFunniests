@@ -2,7 +2,7 @@
 #include "PluginEditor.h"
 
 FunnyEQAudioProcessorEditor::FunnyEQAudioProcessorEditor (FunnyEQAudioProcessor& p)
-: AudioProcessorEditor (&p), bandOne(p, 1), bandTwo(p, 2), bandThree(p, 3), bandFour(p, 4), audioProcessor (p)
+: AudioProcessorEditor (&p), bandOne(p, 1), bandTwo(p, 2), bandThree(p, 3), bandFour(p, 4), myAnalizer(p), audioProcessor (p)
 {
     setSize (WIDTH, HEIGHT);
     

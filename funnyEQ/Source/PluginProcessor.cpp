@@ -10,7 +10,7 @@ FunnyEQAudioProcessor::FunnyEQAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       ), parameters(*this, nullptr, PARAMETERS, initializeGUI())
+                       ), parameters(*this, nullptr, PARAMETERS, initializeGUI()), forwardFFT (fftOrder), window (fftSize, juce::dsp::WindowingFunction<float>::hann)
 #endif
 {
     initializeDSP();
@@ -43,7 +43,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout FunnyEQAudioProcessor::initi
                                                                  BANDONE_FREQ_NAME,
                                                                  50.0f,
                                                                  18000.0f,
-                                                                 100.0f));
+                                                                 5000.0f));
     //BAND ONE GAIN
     params.push_back(std::make_unique<juce::AudioParameterFloat>(BANDONE_GAIN_ID,
                                                                  BANDONE_GAIN_NAME,
@@ -60,7 +60,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout FunnyEQAudioProcessor::initi
                                                                  BANDTWO_FREQ_NAME,
                                                                  50.0f,
                                                                  10000.0f,
-                                                                 5000.0f));
+                                                                 500.0f));
     //BAND TWO GAIN
     params.push_back(std::make_unique<juce::AudioParameterFloat>(BANDTWO_GAIN_ID,
                                                                  BANDTWO_GAIN_NAME,
@@ -76,7 +76,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout FunnyEQAudioProcessor::initi
                                                                  BANDTHREE_FREQ_NAME,
                                                                  50.0f,
                                                                  10000.0f,
-                                                                 5000.0f));
+                                                                 500.0f));
     //BAND TWO GAIN
     params.push_back(std::make_unique<juce::AudioParameterFloat>(BANDTHREE_GAIN_ID,
                                                                  BANDTHREE_GAIN_NAME,
@@ -92,7 +92,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout FunnyEQAudioProcessor::initi
                                                                  BANDFOUR_FREQ_NAME,
                                                                  50.0f,
                                                                  10000.0f,
-                                                                 5000.0f));
+                                                                 500.0f));
     //BAND TWO GAIN
     params.push_back(std::make_unique<juce::AudioParameterFloat>(BANDFOUR_GAIN_ID,
                                                                  BANDFOUR_GAIN_NAME,
@@ -233,6 +233,48 @@ void FunnyEQAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
                                      *parameters.getRawParameterValue(BANDFOUR_FREQ_ID),
                                      *parameters.getRawParameterValue(BANDFOUR_GAIN_ID),
                                      EQ_Filters::FilterType::HPF);
+        
+        pushNextSampleIntoFifo(channelData);
+    }
+}
+
+void FunnyEQAudioProcessor::pushNextSampleIntoFifo (float* sample) noexcept
+{
+    for(int i = 0; i < getBlockSize(); i++)
+    {
+        if (fifoIndex == fftSize)
+        {
+            if (! nextFFTBlockReady)
+            {
+                juce::zeromem (fftData, sizeof (fftData));
+                memcpy (fftData, fifo, sizeof (fifo));
+                nextFFTBlockReady = true;
+            }
+
+            fifoIndex = 0;
+        }
+
+        fifo[fifoIndex++] = sample[i];
+    }
+}
+
+void FunnyEQAudioProcessor::drawNextFrameOfSpectrum()
+{
+    window.multiplyWithWindowingTable (fftData, fftSize);
+    forwardFFT.performFrequencyOnlyForwardTransform (fftData);
+
+    auto mindB = -100.0f;
+    auto maxdB =    0.0f;
+
+    for (int i = 0; i < scopeSize; ++i)
+    {
+        auto skewedProportionX = 1.0f - std::exp (std::log (1.0f - (float) i / (float) scopeSize) * 0.2f);
+        auto fftDataIndex = juce::jlimit (0, fftSize / 2, (int) (skewedProportionX * (float) fftSize * 0.5f));
+        auto level = juce::jmap (juce::jlimit (mindB, maxdB, juce::Decibels::gainToDecibels (fftData[fftDataIndex])
+                                                           - juce::Decibels::gainToDecibels ((float) fftSize)),
+                                 mindB, maxdB, 0.0f, 1.0f);
+
+        scopeData[i] = level;
     }
 }
 

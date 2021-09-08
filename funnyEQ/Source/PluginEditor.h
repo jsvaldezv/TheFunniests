@@ -8,6 +8,7 @@
 class FunnyEQAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
 public:
+    
     FunnyEQAudioProcessorEditor (FunnyEQAudioProcessor&);
     ~FunnyEQAudioProcessorEditor() override;
 

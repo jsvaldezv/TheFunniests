@@ -37,6 +37,22 @@ public:
     
     juce::AudioProcessorValueTreeState parameters;
     juce::AudioProcessorValueTreeState::ParameterLayout initializeGUI();
+    
+    enum
+    {
+        fftOrder  = 11,
+        fftSize   = 1 << fftOrder,
+        scopeSize = 512
+    };
+    
+    void pushNextSampleIntoFifo (float* sample) noexcept;
+    void drawNextFrameOfSpectrum();
+    
+    float fifo [fftSize];
+    float fftData [2 * fftSize];
+    int fifoIndex = 0;
+    bool nextFFTBlockReady = false;
+    float scopeData [scopeSize];
 
 private:
     
@@ -44,6 +60,9 @@ private:
     std::unique_ptr<EQ_Filters> ptrBandTwo[2];
     std::unique_ptr<EQ_Filters> ptrBandThree[2];
     std::unique_ptr<EQ_Filters> ptrBandFour[2];
+    
+    juce::dsp::FFT forwardFFT;
+    juce::dsp::WindowingFunction<float> window;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FunnyEQAudioProcessor)
 };
