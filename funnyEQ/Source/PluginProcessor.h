@@ -40,8 +40,10 @@ public:
 
 private:
     
-    std::unique_ptr<EQ_Filters> ptrLowPass[2];
-    std::unique_ptr<EQ_Filters> ptrHighPass[2];
+    std::unique_ptr<EQ_Filters> ptrBandOne[2];
+    std::unique_ptr<EQ_Filters> ptrBandTwo[2];
+    std::unique_ptr<EQ_Filters> ptrBandThree[2];
+    std::unique_ptr<EQ_Filters> ptrBandFour[2];
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FunnyEQAudioProcessor)
 };

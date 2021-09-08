@@ -17,8 +17,16 @@
       <FILE id="bbWdOD" name="EQ_Filters.cpp" compile="1" resource="0" file="Source/EQ_Filters.cpp"/>
       <FILE id="nciXjD" name="EQ_Filters.h" compile="0" resource="0" file="Source/EQ_Filters.h"/>
     </GROUP>
+    <GROUP id="{EBC85E61-4BC0-D578-70CF-A87874CF15E9}" name="GUI">
+      <FILE id="NLuk42" name="GUI_analizer.cpp" compile="1" resource="0"
+            file="Source/GUI_analizer.cpp"/>
+      <FILE id="Q4zwl3" name="GUI_analizer.h" compile="0" resource="0" file="Source/GUI_analizer.h"/>
+      <FILE id="DuGcGp" name="GUI_eqBand.cpp" compile="1" resource="0" file="Source/GUI_eqBand.cpp"/>
+      <FILE id="dR8jZ5" name="GUI_eqBand.h" compile="0" resource="0" file="Source/GUI_eqBand.h"/>
+    </GROUP>
     <GROUP id="{0E063FAB-AB5A-9330-C781-C5BD1BD91C21}" name="Helpers">
       <FILE id="tCkaR9" name="EQ_Helper.h" compile="0" resource="0" file="Source/EQ_Helper.h"/>
+      <FILE id="oL2kG6" name="GUI_Helper.h" compile="0" resource="0" file="Source/GUI_Helper.h"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
