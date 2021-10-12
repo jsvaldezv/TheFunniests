@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="uoJusg" name="funnyEQ" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
+              companyName="The Funniests" companyCopyright="The Funniests">
   <MAINGROUP id="ipETUx" name="funnyEQ">
     <GROUP id="{8DF16625-F9C9-7368-621A-F5CB98EEB02A}" name="Source">
       <FILE id="UFVfxl" name="PluginProcessor.cpp" compile="1" resource="0"
@@ -11,6 +12,21 @@
       <FILE id="QOOrru" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="iWZnYc" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+    </GROUP>
+    <GROUP id="{AC0C5ED2-B729-BD4B-29A5-BF268435FEA6}" name="DSP">
+      <FILE id="bbWdOD" name="EQ_Filters.cpp" compile="1" resource="0" file="Source/EQ_Filters.cpp"/>
+      <FILE id="nciXjD" name="EQ_Filters.h" compile="0" resource="0" file="Source/EQ_Filters.h"/>
+    </GROUP>
+    <GROUP id="{EBC85E61-4BC0-D578-70CF-A87874CF15E9}" name="GUI">
+      <FILE id="NLuk42" name="GUI_analizer.cpp" compile="1" resource="0"
+            file="Source/GUI_analizer.cpp"/>
+      <FILE id="Q4zwl3" name="GUI_analizer.h" compile="0" resource="0" file="Source/GUI_analizer.h"/>
+      <FILE id="DuGcGp" name="GUI_eqBand.cpp" compile="1" resource="0" file="Source/GUI_eqBand.cpp"/>
+      <FILE id="dR8jZ5" name="GUI_eqBand.h" compile="0" resource="0" file="Source/GUI_eqBand.h"/>
+    </GROUP>
+    <GROUP id="{0E063FAB-AB5A-9330-C781-C5BD1BD91C21}" name="Helpers">
+      <FILE id="tCkaR9" name="EQ_Helper.h" compile="0" resource="0" file="Source/EQ_Helper.h"/>
+      <FILE id="oL2kG6" name="GUI_Helper.h" compile="0" resource="0" file="Source/GUI_Helper.h"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
@@ -33,6 +49,7 @@
         <MODULEPATH id="juce_graphics" path="../../../Documents/Programming/JUCE/modules"/>
         <MODULEPATH id="juce_gui_basics" path="../../../Documents/Programming/JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../../Documents/Programming/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
   </EXPORTFORMATS>
@@ -46,9 +63,13 @@
     <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
 </JUCERPROJECT>
