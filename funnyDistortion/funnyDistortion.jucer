@@ -25,10 +25,6 @@
       <FILE id="fGGXaY" name="funnyVolume.h" compile="0" resource="0" file="Source/funnyVolume.h"/>
     </GROUP>
     <GROUP id="{E1110910-594D-2ED8-A3A3-B9B83AF754AD}" name="GUI">
-      <FILE id="PMy37N" name="funnyDistortionGUI.cpp" compile="1" resource="0"
-            file="Source/funnyDistortionGUI.cpp"/>
-      <FILE id="monnka" name="funnyDistortionGUI.h" compile="0" resource="0"
-            file="Source/funnyDistortionGUI.h"/>
       <FILE id="jwunLg" name="funnyLookAndFeel.h" compile="0" resource="0"
             file="Source/funnyLookAndFeel.h"/>
     </GROUP>
