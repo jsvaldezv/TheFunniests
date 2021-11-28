@@ -2,7 +2,9 @@
 
 ### By: Jesús Salvador Valdez Vázquez
 
-This is an audio plug-in bundle which I'm working on, it is not finshed but you can test Funny Distortion which is the imagen above.
+<img width="598" alt="distor" src="https://user-images.githubusercontent.com/47612276/143785677-70ef6b60-e026-4ac4-afc9-05915591c0bc.png">
+
+This is an audio plug-in bundle which I'm working on, it isn't finished but you can test Funny Distortion which is the imagen above.
 
 **Works in any DAW which accepts VST, VST3 or AU**
 
