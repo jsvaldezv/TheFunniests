@@ -25,7 +25,8 @@ public:
         auto pointerThickness = 6.0f;
         
         // fill
-        g.setColour(juce::Colours::black);
+        //g.setColour(juce::Colour(46, 44, 47));
+        g.setColour(juce::Colour(67, 67, 75));
         g.fillEllipse(rx, ry, rw, rw);
         
         // outline

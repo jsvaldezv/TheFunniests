@@ -107,7 +107,7 @@ void FunnyDistortionAudioProcessorEditor::paintGUI()
 
     //**********************************************************************************************
     //COMBOBOX
-    cChoice.setColour(juce::ComboBox::backgroundColourId, juce::Colours::black);
+    cChoice.setColour(juce::ComboBox::backgroundColourId, juce::Colour(67, 67, 75));
     cChoice.setColour(juce::ComboBox::outlineColourId, juce::Colours::ghostwhite);
     cChoice.setColour(juce::ComboBox::arrowColourId, juce::Colours::ghostwhite);
     cChoice.setColour(juce::ComboBox::textColourId, juce::Colours::ghostwhite);
