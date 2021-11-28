@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="UFUuIJ" name="funnyDistortion" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
+              companyName="The Funniests" companyCopyright="The Funniests">
   <MAINGROUP id="xilsJg" name="funnyDistortion">
+    <GROUP id="{FF708027-7176-7D91-1F37-FE0455B178DB}" name="Helpers">
+      <FILE id="qQkK39" name="funnyNames.h" compile="0" resource="0" file="Source/funnyNames.h"/>
+    </GROUP>
     <GROUP id="{138B2584-58D1-EAC6-B205-11EF1EC4D898}" name="Source">
       <FILE id="tHiW2p" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
@@ -11,6 +15,25 @@
       <FILE id="Doaf2w" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="vxnG7Y" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+    </GROUP>
+    <GROUP id="{DAF033BD-7A96-1019-9355-E1EDEF8C62B2}" name="DSP">
+      <FILE id="nlAjBe" name="funnyDistortion.cpp" compile="1" resource="0"
+            file="Source/funnyDistortion.cpp"/>
+      <FILE id="XC0I5x" name="funnyDistortion.h" compile="0" resource="0"
+            file="Source/funnyDistortion.h"/>
+      <FILE id="KmnX4j" name="funnyVolume.cpp" compile="1" resource="0" file="Source/funnyVolume.cpp"/>
+      <FILE id="fGGXaY" name="funnyVolume.h" compile="0" resource="0" file="Source/funnyVolume.h"/>
+    </GROUP>
+    <GROUP id="{E1110910-594D-2ED8-A3A3-B9B83AF754AD}" name="GUI">
+      <FILE id="PMy37N" name="funnyDistortionGUI.cpp" compile="1" resource="0"
+            file="Source/funnyDistortionGUI.cpp"/>
+      <FILE id="monnka" name="funnyDistortionGUI.h" compile="0" resource="0"
+            file="Source/funnyDistortionGUI.h"/>
+      <FILE id="jwunLg" name="funnyLookAndFeel.h" compile="0" resource="0"
+            file="Source/funnyLookAndFeel.h"/>
+    </GROUP>
+    <GROUP id="{76812A6F-9F16-C5BA-75C9-1A6DDAAA7B1C}" name="Assets">
+      <FILE id="qaKOh6" name="bulbo.png" compile="0" resource="1" file="Assets/bulbo.png"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
